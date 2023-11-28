@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Moq" Version="4.20.69" />
+    <PackageReference Include="MSTest.TestFramework" Version="2.2.10" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+  </PropertyGroup>
+
+<!--  <ItemGroup>-->
+<!--    <Compile Update="XMLParserTests\Usings.cs">-->
+<!--      <Link>XMLParserTests\Usings.cs</Link>-->
+<!--    </Compile>-->
+<!--    <Compile Update="XMLParserTests\UnitTest1.cs">-->
+<!--      <Link>XMLParserTests\UnitTest1.cs</Link>-->
+<!--    </Compile>-->
+<!--  </ItemGroup>-->
+
+</Project>
