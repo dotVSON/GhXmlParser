@@ -69,5 +69,15 @@ namespace GhXMLParser.Properties {
                 return ((byte[])(obj));
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] test_gh {
+            get {
+                object obj = ResourceManager.GetObject("test_gh", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
     }
 }
