@@ -1,15 +1,56 @@
-﻿using System.Diagnostics;
-using System.Xml;
+﻿using System.Xml;
+using GH_IO.Serialization;
 
-namespace GhXMLParser
+namespace GhXMLParser.Lib
 {
     public class XmlGetters
     {
         private readonly XmlDocument doc;
 
-        public XmlGetters(XmlDocument doc)
+        public XmlGetters(string path)
         {
-            this.doc = doc;
+            
+            try
+            {
+                var doc = new XmlDocument();
+                var archive = new GH_Archive();
+
+                // Attempt to read from the file
+                if (!archive.ReadFromFile(path))
+                {
+                    throw new IOException($"Failed to read from file at {path}.");
+                }
+
+                // Attempt to serialize to XML
+                string xmlContent = archive.Serialize_Xml();
+                if (string.IsNullOrEmpty(xmlContent))
+                {
+                    throw new InvalidOperationException("Serialization of the archive returned null or empty content.");
+                }
+
+                // Load serialized content into XmlDocument
+                doc.LoadXml(xmlContent);
+                //get path to desktop
+                string desktio = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+                //save xml to desktop
+                doc.Save(desktio + "/test.xml");
+                this.doc = doc;
+            }
+            catch (XmlException ex)
+            {
+                // Handle XML-specific errors (e.g., malformed XML content)
+                Console.WriteLine($"XML error: {ex.Message}");
+            }
+            catch (IOException ex)
+            {
+                // Handle IO errors (e.g., file not found, no permission to read file, etc.)
+                Console.WriteLine($"IO error: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                // Handle any other unexpected errors
+                Console.WriteLine($"An unexpected error occurred: {ex.Message}");
+            }
         }
 
         #region Definition properties

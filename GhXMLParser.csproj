@@ -1,10 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="ConsoleTesting\**" />
+    <EmbeddedResource Remove="ConsoleTesting\**" />
+    <None Remove="ConsoleTesting\**" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Moq" Version="4.20.69" />
@@ -12,11 +16,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Properties\Resources.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
+    <Reference Include="GH_IO">
+      <HintPath>Resources\GH_IO.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
   <ItemGroup>
@@ -39,14 +41,5 @@
   <PropertyGroup>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
-
-<!--  <ItemGroup>-->
-<!--    <Compile Update="XMLParserTests\Usings.cs">-->
-<!--      <Link>XMLParserTests\Usings.cs</Link>-->
-<!--    </Compile>-->
-<!--    <Compile Update="XMLParserTests\UnitTest1.cs">-->
-<!--      <Link>XMLParserTests\UnitTest1.cs</Link>-->
-<!--    </Compile>-->
-<!--  </ItemGroup>-->
-
+  
 </Project>
