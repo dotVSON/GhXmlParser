@@ -1,5 +1,5 @@
 ﻿// See https://aka.ms/new-console-template for more information
-using GhXMLParser.Lib;
+using GhXMLParser;
 
 
 namespace ConsoleTesting
@@ -11,11 +11,13 @@ namespace ConsoleTesting
             
             //Get exe path
             string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "test_gh.gh");
-            var gh = new GhXMLParser.Lib.XmlGetters(path);
-
-            Console.WriteLine(gh.GetAuthorName());
             
+            var xmlDoc = Helper.GhToXml(path);
+            var header = new GhHeader(xmlDoc);
+            var xmlComponent = Helper.GetAllObjectsAsXml(xmlDoc);
+            var allComponents = xmlComponent.Select(component => new GhComponent(component)).ToList();
 
+            // Console.WriteLine(allComponents[0].XmlInputs[0].InnerXml);
         }
     }
 }

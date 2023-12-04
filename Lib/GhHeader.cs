@@ -1,56 +1,27 @@
 ﻿using System.Xml;
 using GH_IO.Serialization;
 
-namespace GhXMLParser.Lib
+namespace GhXMLParser
 {
-    public class XmlGetters
+    public class GhHeader
     {
         private readonly XmlDocument doc;
+        
+        public string ArchiveVersion => GetArchiveVersion();
+        public string GrasshopperVersion => GetGrasshopperVersion();
+        public string DocumentId => GetDocumentId();
+        public string DocumentDate => GetDocumentDate();
+        public string DocumentDescription => GetDocumentDescription();
+        public string DocumentName => GetDocumentName();
+        public (int targetX, int targetY, float zoom) ProjectionDetails => GetProjectionDetails();
+        public string AuthorEmail => GetAuthorEmail();
+        public string AuthorName => GetAuthorName();
+        public string AuthorCopyRight => GetAuthorCopyright();
+        public int ComponentCount => GetComponentCount();
 
-        public XmlGetters(string path)
+        public GhHeader(XmlDocument doc)
         {
-            
-            try
-            {
-                var doc = new XmlDocument();
-                var archive = new GH_Archive();
-
-                // Attempt to read from the file
-                if (!archive.ReadFromFile(path))
-                {
-                    throw new IOException($"Failed to read from file at {path}.");
-                }
-
-                // Attempt to serialize to XML
-                string xmlContent = archive.Serialize_Xml();
-                if (string.IsNullOrEmpty(xmlContent))
-                {
-                    throw new InvalidOperationException("Serialization of the archive returned null or empty content.");
-                }
-
-                // Load serialized content into XmlDocument
-                doc.LoadXml(xmlContent);
-                //get path to desktop
-                string desktio = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-                //save xml to desktop
-                doc.Save(desktio + "/test.xml");
-                this.doc = doc;
-            }
-            catch (XmlException ex)
-            {
-                // Handle XML-specific errors (e.g., malformed XML content)
-                Console.WriteLine($"XML error: {ex.Message}");
-            }
-            catch (IOException ex)
-            {
-                // Handle IO errors (e.g., file not found, no permission to read file, etc.)
-                Console.WriteLine($"IO error: {ex.Message}");
-            }
-            catch (Exception ex)
-            {
-                // Handle any other unexpected errors
-                Console.WriteLine($"An unexpected error occurred: {ex.Message}");
-            }
+            this.doc = doc;
         }
 
         #region Definition properties
@@ -60,7 +31,7 @@ namespace GhXMLParser.Lib
         /// </summary>
         /// <returns>The plugin version in 'Major.Minor.Revision' format.</returns>
         /// <exception cref="InvalidOperationException"></exception>
-        public string GetArchiveVersion()
+        private string GetArchiveVersion()
         {
             var versionNode = doc.SelectSingleNode("//item[@name='ArchiveVersion']");
             if (versionNode == null)
@@ -89,7 +60,7 @@ namespace GhXMLParser.Lib
         /// </summary>
         /// <returns>The plugin version in 'Major.Minor.Revision' format.</returns>
         /// <exception cref="InvalidOperationException"></exception>
-        public string GetGrasshopperVersion()
+        private string GetGrasshopperVersion()
         {
             var versionNode = doc.SelectSingleNode("//item[@name='plugin_version']");
             if (versionNode == null)
@@ -120,7 +91,7 @@ namespace GhXMLParser.Lib
         /// </summary>
         /// <returns></returns>
         /// <exception cref="InvalidOperationException"></exception>
-        public string GetDocumentId()
+        private string GetDocumentId()
         {
             var node = doc.SelectSingleNode("//chunk[@name='DocumentHeader']/items/item[@name='DocumentID']");
             if (node == null || string.IsNullOrEmpty(node.InnerText))
@@ -130,6 +101,7 @@ namespace GhXMLParser.Lib
 
             return node.InnerText;
         }
+        
         //TODO Preview/PreviewMeshType/PreviewNormal/PreviewSelected
 
         #endregion
@@ -140,7 +112,7 @@ namespace GhXMLParser.Lib
         /// </summary>
         /// <returns>The document date as a string.</returns>
         /// <exception cref="InvalidOperationException"></exception>
-        public string GetDocumentDate()
+        private string GetDocumentDate()
         {
             var node = doc.SelectSingleNode("//chunk[@name='DefinitionProperties']/items/item[@name='Date']");
             if (node == null || string.IsNullOrEmpty(node.InnerText))
@@ -156,7 +128,7 @@ namespace GhXMLParser.Lib
         /// </summary>
         /// <returns>The document description.</returns>
         /// <exception cref="InvalidOperationException"></exception>
-        public string GetDocumentDescription()
+        private string GetDocumentDescription()
         {
             var node = doc.SelectSingleNode("//chunk[@name='DefinitionProperties']/items/item[@name='Description']");
             if (node == null)
@@ -172,7 +144,7 @@ namespace GhXMLParser.Lib
         /// </summary>
         /// <returns>The document name.</returns>
         /// <exception cref="InvalidOperationException"></exception>
-        public string GetDocumentName()
+        private string GetDocumentName()
         {
             var node = doc.SelectSingleNode("//chunk[@name='DefinitionProperties']/items/item[@name='Name']");
             if (node == null || string.IsNullOrEmpty(node.InnerText))
@@ -237,7 +209,7 @@ namespace GhXMLParser.Lib
         /// </summary>
         /// <returns>The author's company.</returns>
         /// <exception cref="InvalidOperationException"></exception>
-        public string GetAuthorEmail()
+        private string GetAuthorEmail()
         {
             var node = doc.SelectSingleNode("//chunk[@name='Author']/items/item[@name='EMail']");
 
@@ -254,7 +226,7 @@ namespace GhXMLParser.Lib
         /// </summary>
         /// <returns>The author's copyright.</returns>
         /// <exception cref="InvalidOperationException"></exception>
-        public string GetAuthorCopyright()
+        private string GetAuthorCopyright()
         {
             var node = doc.SelectSingleNode("//chunk[@name='Author']/items/item[@name='Copyright']");
             if (node == null)
@@ -270,7 +242,7 @@ namespace GhXMLParser.Lib
         /// </summary>
         /// <returns>The author's name.</returns>
         /// <exception cref="InvalidOperationException"></exception>
-        public string GetAuthorName()
+        private string GetAuthorName()
         {
             var node = doc.SelectSingleNode("//chunk[@name='Author']/items/item[@name='Name']");
             if (node == null)
@@ -292,7 +264,7 @@ namespace GhXMLParser.Lib
     /// </summary>
     /// <returns>The object count as an integer.</returns>
     /// <exception cref="InvalidOperationException"></exception>
-    public int GetObjectCount()
+    public int GetComponentCount()
     {
         var node = doc.SelectSingleNode("//item[@name='ObjectCount']");
         if (node == null || string.IsNullOrEmpty(node.InnerText))
@@ -308,27 +280,7 @@ namespace GhXMLParser.Lib
         return objectCount;
     }
     
-    /// <summary>
-    /// Get all object chunks as separate XML documents.
-    /// </summary>
-    /// <returns>A list of XML documents, each representing an object.</returns>
-    public List<XmlDocument> GetAllObjectsAsXml()
-    {
-        var objectXmlList = new List<XmlDocument>();
 
-        // This XPath targets any 'Object' chunk within 'DefinitionObjects'
-        var objectChunks = doc.SelectNodes("//chunk[@name='DefinitionObjects']//chunk[@name='Object']");
-
-        foreach (XmlNode objectChunk in objectChunks)
-        {
-            XmlDocument objectXml = new XmlDocument();
-            XmlNode importNode = objectXml.ImportNode(objectChunk, true);
-            objectXml.AppendChild(importNode);
-            objectXmlList.Add(objectXml);
-        }
-
-        return objectXmlList;
-    }
 
     #region Component Inofs
 
