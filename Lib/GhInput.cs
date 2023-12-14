@@ -1,4 +1,5 @@
-﻿using System.Xml;
+﻿using System.Drawing;
+using System.Xml;
 
 namespace GhXMLParser;
 
@@ -12,12 +13,16 @@ public class GhInput
     public bool IsOptional => GetOptional();
     public string Source => GetSource();
     public int SourceCount => GetSourceCount();
+    public string Type {get; set;}
+
+    public Rectangle Bounds => GetBounds();
+    public PointF Pivot => GetPivot();
     
     // Constructor
     public GhInput(XmlDocument doc)
     {
         this.doc = doc;
-        Console.WriteLine(doc.OuterXml);
+        // Console.WriteLine(doc.OuterXml);
     }
     
     public string GetDescription()
@@ -106,5 +111,29 @@ public class GhInput
 
         return sourceCount;
     }
+    
+    private Rectangle GetBounds()
+    {
+        var node = doc.SelectSingleNode("//chunk[@name='Attributes']/items/item[@name='Bounds']");
+        if (node == null)
+        {
+            throw new InvalidOperationException("Bounds is missing in XML.");
+        }
+        return Helper.NodeToBounds(node);
+    }
+     
+    private PointF GetPivot()
+    {
+        var node = doc.SelectSingleNode("//chunk[@name='Attributes']/items/item[@name='Pivot']");
+
+        if (node == null)
+        {
+            throw new InvalidOperationException("Pivot is missing in XML.");
+        }
+        
+        return Helper.NodeToPoint(node);
+    }
+    
+
 
 }

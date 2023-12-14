@@ -8,16 +8,21 @@ namespace ConsoleTesting
     {
         public static void Main(string[] args)
         {
-            
             //Get exe path
-            string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "test_gh.gh");
+            string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Orbb.gh");
             
             var xmlDoc = Helper.GhToXml(path);
             var header = new GhHeader(xmlDoc);
+            var dep = header.Dependencies;
             var xmlComponent = Helper.GetAllObjectsAsXml(xmlDoc);
             var allComponents = xmlComponent.Select(component => new GhComponent(component)).ToList();
 
-            // Console.WriteLine(allComponents[0].XmlInputs[0].InnerXml);
+            foreach (var component in  allComponents)
+            {
+                Console.WriteLine(component.Name);
+                Console.WriteLine($"Number of inputs {component.Inputs.Count}");
+                
+            }
         }
     }
 }

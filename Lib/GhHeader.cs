@@ -1,5 +1,6 @@
 ﻿using System.Xml;
 using GH_IO.Serialization;
+using System.Linq;
 
 namespace GhXMLParser
 {
@@ -18,6 +19,7 @@ namespace GhXMLParser
         public string AuthorName => GetAuthorName();
         public string AuthorCopyRight => GetAuthorCopyright();
         public int ComponentCount => GetComponentCount();
+        public List<GhDependency> Dependencies => GetDependency();
 
         public GhHeader(XmlDocument doc)
         {
@@ -253,7 +255,52 @@ namespace GhXMLParser
             return node.InnerText;
         }
         #endregion
+
+        public List<GhDependency> GetDependency()
+        {
+            if (doc == null)
+            {
+                throw new InvalidOperationException("XML document is not initialized.");
+            }
+
+            List<GhDependency> libraries = new List<GhDependency>();
+
+            var libraryNodes = doc.SelectNodes("//chunk[@name='GHALibraries']/chunks/chunk[@name='Library']");
+            if (libraryNodes == null)
+            {
+                return libraries; // Return empty list if no library nodes found
+            }
+
+            foreach (XmlNode libraryNode in libraryNodes)
+            {
+                var libraryInfo = new GhDependency();
+
+                var assemblyFullNameNode = libraryNode.SelectSingleNode("items/item[@name='AssemblyFullName']");
+                var assemblyVersionNode = libraryNode.SelectSingleNode("items/item[@name='AssemblyVersion']");
+                var authorNode = libraryNode.SelectSingleNode("items/item[@name='Author']");
+                var idNode = libraryNode.SelectSingleNode("items/item[@name='Id']");
+                var nameNode = libraryNode.SelectSingleNode("items/item[@name='Name']");
+
+                libraryInfo.AssemblyFullName = assemblyFullNameNode?.InnerText;
+                libraryInfo.AssemblyVersion = assemblyVersionNode?.InnerText;
+                libraryInfo.Author = authorNode?.InnerText;
+
+                if (Guid.TryParse(idNode?.InnerText, out Guid parsedGuid))
+                {
+                    libraryInfo.Id = parsedGuid;
+                }
+
+                libraryInfo.Name = nameNode?.InnerText;
+
+                libraries.Add(libraryInfo);
+            }
+
+            return libraries;
+        }
+        
         #endregion
+        
+        
     
 
     #region DefinitionObjects

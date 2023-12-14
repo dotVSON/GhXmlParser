@@ -6,19 +6,20 @@ namespace GhXMLParser;
 
 public class GhComponent
 {
-    private readonly XmlDocument doc;
+    public readonly XmlDocument doc;
     public string GUID => GetGUID();
     public string Name => GetName();
     public string Description => GetDescription();
     public string InstanceGuid => GetInstanceGuid();
     public string Nickname => GetNickname();
-    public bool IsOptional => GetOptional();
+    public bool? IsOptional => GetOptional();
     public Rectangle Bounds => GetBounds();
     public PointF Pivot => GetPivot();
     public bool IsSelected => GetIsSelected();
-    
     public List<GhInput> Inputs { get; } = new List<GhInput>();
+    public List<GhOutput> Outputs { get; } = new List<GhOutput>();
     public List<XmlDocument> XmlInputs => GetAllXmlInputs();
+    public List<XmlDocument> XmlOutputs => GetAllXmlOutputs();
 
     public GhComponent(XmlDocument doc)
     {
@@ -31,6 +32,16 @@ public class GhComponent
                 Inputs.Add(ghInput);
             }
         }
+
+        foreach (var output in XmlOutputs)
+        {
+            var ghOutput = new GhOutput(output);
+            if (ghOutput != null)
+            {
+                Outputs.Add(ghOutput);
+            }
+        }
+
     }
 
     private string GetGUID()
@@ -66,6 +77,7 @@ public class GhComponent
 
         return node.InnerText;
     }
+    
 
     private string GetInstanceGuid()
     {
@@ -91,14 +103,15 @@ public class GhComponent
         return node.InnerText;
     }
 
-    private bool GetOptional()
+    private bool? GetOptional()
     {
         var optionalStr =
             doc.SelectSingleNode(
                 "//chunk[@name='Object']/chunks/chunk[@name='Container']/items/item[@name='Optional']");
+
         if (optionalStr == null || string.IsNullOrEmpty(optionalStr.InnerText))
         {
-            throw new InvalidOperationException("Optional is missing or empty in XML.");
+            return null;
         }
 
         if (!bool.TryParse(optionalStr.InnerText, out var optional))
@@ -117,12 +130,12 @@ public class GhComponent
             throw new InvalidOperationException("Bounds is missing in XML.");
         }
 
-        int x = GetIntFromNode(node, "X");
-        int y = GetIntFromNode(node, "Y");
-        int width = GetIntFromNode(node, "W");
-        int height = GetIntFromNode(node, "H");
+        float x = Helper.GetFloatFromNode(node, "X");
+        float y = Helper.GetFloatFromNode(node, "Y");
+        float width = Helper.GetFloatFromNode(node, "W");
+        float height = Helper.GetFloatFromNode(node, "H");
 
-        return new Rectangle(x, y, width, height);
+        return new Rectangle((int)x, (int)y, (int)width, (int)height);
     }
 
     private PointF GetPivot()
@@ -135,8 +148,8 @@ public class GhComponent
             throw new InvalidOperationException("Pivot is missing in XML.");
         }
         
-        float x = GetIntFromNode(node, "X");
-        float y = GetIntFromNode(node, "Y");
+        float x = Helper.GetFloatFromNode(node, "X");
+        float y = Helper.GetFloatFromNode(node, "Y");
         return new PointF(x, y);
     }
     
@@ -158,30 +171,37 @@ public class GhComponent
     }
     
     
-    private int GetIntFromNode(XmlNode parentNode, string childNodeName)
-    {
-        var childNode = parentNode.SelectSingleNode(childNodeName);
-        if (childNode == null || !int.TryParse(childNode.InnerText, out int value))
-        {
-            throw new InvalidOperationException($"{childNodeName} is missing or invalid in XML.");
-        }
-        return value;
-    }
+
 
     private List<XmlDocument> GetAllXmlInputs()
     {
-        var objectXmlList = new List<XmlDocument>();
-        var objectChunks =
-            doc.SelectNodes("//chunk[@name='Object']/chunk[@name='Container']/chunks/chunk[@name='param_input']");
-        foreach (XmlElement objectChunk in objectChunks)
-        {
-            var objectXml = new XmlDocument();
-            var importNode = objectXml.ImportNode(objectChunk, true);
-            objectXml.AppendChild(importNode);
-            objectXmlList.Add(objectXml);
-        }
+        var paramInputXmlList = new List<XmlDocument>();
 
-        Console.WriteLine($"Component {Name} has {objectXmlList.Count} inputs.");
-        return objectXmlList;
+        var paramInputChunks = doc.SelectNodes("//chunk[@name='param_input']");
+
+        foreach (XmlElement paramInputChunk in paramInputChunks)
+        {
+            var paramInputXml = new XmlDocument();
+            var importNode = paramInputXml.ImportNode(paramInputChunk, true);
+            paramInputXml.AppendChild(importNode);
+            paramInputXmlList.Add(paramInputXml);
+        }
+        return paramInputXmlList;
+    }
+    
+    private List<XmlDocument> GetAllXmlOutputs()
+    {
+        var paramInputXmlList = new List<XmlDocument>();
+
+        var paramInputChunks = doc.SelectNodes("//chunk[@name='param_output']");
+
+        foreach (XmlElement paramInputChunk in paramInputChunks)
+        {
+            var paramInputXml = new XmlDocument();
+            var importNode = paramInputXml.ImportNode(paramInputChunk, true);
+            paramInputXml.AppendChild(importNode);
+            paramInputXmlList.Add(paramInputXml);
+        }
+        return paramInputXmlList;
     }
 }

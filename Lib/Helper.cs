@@ -1,4 +1,5 @@
-﻿using System.Xml;
+﻿using System.Drawing;
+using System.Xml;
 using GH_IO.Serialization;
 
 namespace GhXMLParser;
@@ -71,15 +72,55 @@ public static class Helper
         return objectXmlList;
     }
     
-    public struct PointF
+    public static float GetFloatFromNode(XmlNode parentNode, string childNodeName)
     {
-        public float X { get; set; }
-        public float Y { get; set; }
-
-        public PointF(float x, float y)
+        var childNode = parentNode.SelectSingleNode(childNodeName);
+        if (childNode == null || !float.TryParse(childNode.InnerText, out float value))
         {
-            X = x;
-            Y = y;
+            throw new InvalidOperationException($"{childNodeName} is missing or invalid in XML.");
+        }
+        return value;
+    }
+
+    public static Rectangle NodeToBounds(XmlNode node)
+    {
+        if (node == null)
+        {
+            throw new InvalidOperationException("Bounds is missing in XML.");
+        }
+        try
+        {
+            float x = GetFloatFromNode(node, "X");
+            float y = GetFloatFromNode(node, "Y");
+            float width = GetFloatFromNode(node, "W");
+            float height = GetFloatFromNode(node, "H");
+
+            return new Rectangle((int)x, (int)y, (int)width, (int)height);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+    
+    public static PointF NodeToPoint(XmlNode node)
+    {
+        if (node == null)
+        {
+            throw new InvalidOperationException("Point is missing in XML.");
+        }
+        try
+        {
+            float x = GetFloatFromNode(node, "X");
+            float y = GetFloatFromNode(node, "Y");
+
+            return new PointF(x, y);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
         }
     }
 }
