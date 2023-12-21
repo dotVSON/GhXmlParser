@@ -20,8 +20,8 @@ namespace ConsoleTesting
             var dep = header.Dependencies;
             
             //Get all the components in the grasshopper file
-            var xmlComponent = Helper.GetAllComponentsAsXml(grasshopperXmlDoc);
-            var allComponents = xmlComponent.Select(component => new GhComponent(component)).ToList();
+            var xmlComponents = Helper.GetAllComponentsAsXml(grasshopperXmlDoc);
+            var allComponents = xmlComponents.Select(component => new GhComponent(component)).ToList();
 
             foreach (var component in allComponents)
             {
