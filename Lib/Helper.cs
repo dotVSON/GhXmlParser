@@ -4,9 +4,35 @@ using GH_IO.Serialization;
 
 namespace GhXMLParser;
 
+/// <summary>
+/// Helper methods for parsing Grasshopper files.
+/// </summary>
 public static class Helper
 {
-    public static XmlDocument GhToXml(string path)
+    
+    /// <summary>
+    /// Converts a Grasshopper file to an XmlDocument.
+    /// </summary>
+    /// <param name="path">The file path of the Grasshopper file to be converted.</param>
+    /// <returns>An XmlDocument representing the serialized Grasshopper file content.</returns>
+    /// <exception cref="IOException">Thrown when there is an issue reading the file from the provided path.</exception>
+    /// <exception cref="InvalidOperationException">Thrown when serialization of the file content returns null or empty.</exception>
+    /// <exception cref="XmlException">Thrown when there is an error in loading the XML content into the XmlDocument.</exception>
+    /// <example>
+    /// <code>
+    /// string path = "path_to_grasshopper_file.gh";
+    /// try
+    /// {
+    ///     XmlDocument xmlDoc = GrasshopperToXml(path);
+    ///     // Use xmlDoc as needed.
+    /// }
+    /// catch (Exception ex)
+    /// {
+    ///     Console.WriteLine("An error occurred: " + ex.Message);
+    /// }
+    /// </code>
+    /// </example>
+    public static XmlDocument GrasshopperToXml(string path)
     {
             var doc = new XmlDocument();
         try
@@ -51,10 +77,10 @@ public static class Helper
     }
     
     /// <summary>
-    /// Get all object chunks as separate XML documents.
+    /// Get all object chunks (components) as separate XML documents.
     /// </summary>
     /// <returns>A list of XML documents, each representing an object.</returns>
-    public static List<XmlDocument> GetAllObjectsAsXml(XmlDocument doc)
+    public static List<XmlDocument> GetAllComponentsAsXml(XmlDocument doc)
     {
         var objectXmlList = new List<XmlDocument>();
 
@@ -72,6 +98,29 @@ public static class Helper
         return objectXmlList;
     }
     
+    
+    /// <summary>
+    /// Retrieves a float value from a specified child node of an XML parent node.
+    /// </summary>
+    /// <param name="parentNode">The parent XML node from which the child node is to be fetched.</param>
+    /// <param name="childNodeName">The name of the child node whose value is to be parsed as a float.</param>
+    /// <returns>The float value parsed from the specified child node.</returns>
+    /// <exception cref="InvalidOperationException">Thrown when the specified child node is missing 
+    /// or its value cannot be parsed as a float.</exception>
+    /// <example>
+    /// <code>
+    /// string childNodeName = "exampleChildNode";
+    /// try
+    /// {
+    ///     float value = GetFloatFromNode(parentNode, childNodeName);
+    ///     // Use the value as needed.
+    /// }
+    /// catch (InvalidOperationException ex)
+    /// {
+    ///     Console.WriteLine("An error occurred: " + ex.Message);
+    /// }
+    /// </code>
+    /// </example>
     public static float GetFloatFromNode(XmlNode parentNode, string childNodeName)
     {
         var childNode = parentNode.SelectSingleNode(childNodeName);
@@ -82,6 +131,27 @@ public static class Helper
         return value;
     }
 
+    /// <summary>
+    /// Converts an XML node into a Rectangle object.
+    /// </summary>
+    /// <param name="node">The XML node containing the rectangle's bounds.
+    /// The node should have child elements or attributes named 'X', 'Y', 'W', and 'H'.</param>
+    /// <returns>A Rectangle object constructed from the bounds specified in the XML node.</returns>
+    /// <exception cref="InvalidOperationException">Thrown when the input XML node is null.</exception>
+    /// <exception cref="Exception">Thrown if any error occurs during the extraction of values from the XML node.</exception>
+    /// <example>
+    /// <code>
+    /// try
+    /// {
+    ///     Rectangle rect = NodeToBounds(myNode);
+    ///     // Use the rect as needed.
+    /// }
+    /// catch (Exception ex)
+    /// {
+    ///     Console.WriteLine("An error occurred: " + ex.Message);
+    /// }
+    /// </code>
+    /// </example>
     public static Rectangle NodeToBounds(XmlNode node)
     {
         if (node == null)
@@ -104,6 +174,29 @@ public static class Helper
         }
     }
     
+    
+    /// <summary>
+    /// Converts a Grasshopper file to an XmlDocument.
+    /// </summary>
+    /// <param name="path">The file path of the Grasshopper file to be converted.</param>
+    /// <returns>An XmlDocument representing the serialized Grasshopper file content.</returns>
+    /// <exception cref="IOException">Thrown when there is an issue reading the file from the provided path.</exception>
+    /// <exception cref="InvalidOperationException">Thrown when serialization of the file content returns null or empty.</exception>
+    /// <exception cref="XmlException">Thrown when there is an error in loading the XML content into the XmlDocument.</exception>
+    /// <example>
+    /// <code>
+    /// string path = "path_to_grasshopper_file.gh";
+    /// try
+    /// {
+    ///     XmlDocument xmlDoc = GrasshopperToXml(path);
+    ///     // Use xmlDoc as needed.
+    /// }
+    /// catch (Exception ex)
+    /// {
+    ///     Console.WriteLine("An error occurred: " + ex.Message);
+    /// }
+    /// </code>
+    /// </example>
     public static PointF NodeToPoint(XmlNode node)
     {
         if (node == null)

@@ -3,23 +3,26 @@ using System.Xml;
 
 namespace GhXMLParser;
 
-public class GhOutput
+/// <summary>
+/// Describes a Grasshopper component input.
+/// </summary>
+public class GhComponentInput
 {
-     private readonly XmlDocument doc;
+    private readonly XmlDocument doc;
     public string Description => GetDescription();
     public string InstanceGuid => GetInstanceGuid();
     public string Name  => GetName();
     public string NickName => GetNickName();
     public bool IsOptional => GetOptional();
-    // public string Source => GetSource();
+    public string Source => GetSource();
     public int SourceCount => GetSourceCount();
+    public string Type {get; set;}
+
     public Rectangle Bounds => GetBounds();
-
     public PointF Pivot => GetPivot();
-
     
     // Constructor
-    public GhOutput(XmlDocument doc)
+    public GhComponentInput(XmlDocument doc)
     {
         this.doc = doc;
         // Console.WriteLine(doc.OuterXml);
@@ -27,7 +30,7 @@ public class GhOutput
     
     public string GetDescription()
     {
-        var node = doc.SelectSingleNode("//chunk[@name='param_output']/items/item[@name='Description']");
+        var node = doc.SelectSingleNode("//chunk[@name='param_input']/items/item[@name='Description']");
         if (node == null || string.IsNullOrEmpty(node.InnerText))
         {
             throw new InvalidOperationException("Description is missing or empty in XML.");
@@ -38,7 +41,7 @@ public class GhOutput
 
     public string GetInstanceGuid()
     {
-        var node = doc.SelectSingleNode("//chunk[@name='param_output']/items/item[@name='InstanceGuid']");
+        var node = doc.SelectSingleNode("//chunk[@name='param_input']/items/item[@name='InstanceGuid']");
         if (node == null || string.IsNullOrEmpty(node.InnerText))
         {
             throw new InvalidOperationException("InstanceGuid is missing or empty in XML.");
@@ -49,7 +52,7 @@ public class GhOutput
 
     public string GetName()
     {
-        var node = doc.SelectSingleNode("//chunk[@name='param_output']/items/item[@name='Name']");
+        var node = doc.SelectSingleNode("//chunk[@name='param_input']/items/item[@name='Name']");
         if (node == null || string.IsNullOrEmpty(node.InnerText))
         {
             throw new InvalidOperationException("Name is missing or empty in XML.");
@@ -60,7 +63,7 @@ public class GhOutput
 
     public string GetNickName()
     {
-        var node = doc.SelectSingleNode("//chunk[@name='param_output']/items/item[@name='NickName']");
+        var node = doc.SelectSingleNode("//chunk[@name='param_input']/items/item[@name='NickName']");
         if (node == null || string.IsNullOrEmpty(node.InnerText))
         {
             throw new InvalidOperationException("NickName is missing or empty in XML.");
@@ -71,7 +74,7 @@ public class GhOutput
 
     public bool GetOptional()
     {
-        var optionalStr = doc.SelectSingleNode("//chunk[@name='param_output']/items/item[@name='Optional']");
+        var optionalStr = doc.SelectSingleNode("//chunk[@name='param_input']/items/item[@name='Optional']");
         if (optionalStr == null || string.IsNullOrEmpty(optionalStr.InnerText))
         {
             throw new InvalidOperationException("Optional is missing or empty in XML.");
@@ -85,49 +88,20 @@ public class GhOutput
         return optional;
     }
 
-    // public string GetSource()
-    // {
+    public string GetSource()
+    {
+        var node = doc.SelectSingleNode("//chunk[@name='param_input']/items/item[@name='Source']");
+        if (node == null || string.IsNullOrEmpty(node.InnerText))
+        {
+            throw new InvalidOperationException("Source is missing or empty in XML.");
+        }
 
- //    /
- //
- //    var node = doc.SelectSingleNode("//chunk[@name='param_output']/items/item[@name='Source']");
- //    //     if (node == null || string.IsNullOrEmpty(node.InnerText))
- //    //     {
- //    //         throw new InvalidOperationException("Source is missing or empty in XML.");
- //    //     }
- //    //
- //    //     return node.InnerText;
- //    // }
- //
- // */
- 
-     private Rectangle GetBounds()
-     {
-         var node = doc.SelectSingleNode("//chunk[@name='Attributes']/items/item[@name='Bounds']");
-         if (node == null)
-         {
-             throw new InvalidOperationException("Bounds is missing in XML.");
-         }
-
-         return Helper.NodeToBounds(node);
-     }
-     
-     private PointF GetPivot()
-     {
-         var node = doc.SelectSingleNode("//chunk[@name='Attributes']/items/item[@name='Pivot']");
-
-         if (node == null)
-         {
-             throw new InvalidOperationException("Pivot is missing in XML.");
-         }
-        
-         return Helper.NodeToPoint(node);
-     }
-    
+        return node.InnerText;
+    }
 
     public int GetSourceCount()
     {
-        var sourceCountStr = doc.SelectSingleNode("//chunk[@name='param_output']/items/item[@name='SourceCount']");
+        var sourceCountStr = doc.SelectSingleNode("//chunk[@name='param_input']/items/item[@name='SourceCount']");
         if (sourceCountStr == null || string.IsNullOrEmpty(sourceCountStr.InnerText))
         {
             throw new InvalidOperationException("SourceCount is missing or empty in XML.");
@@ -141,14 +115,28 @@ public class GhOutput
         return sourceCount;
     }
     
-    private float GetFloatFromNode(XmlNode parentNode, string childNodeName)
+    private Rectangle GetBounds()
     {
-        var childNode = parentNode.SelectSingleNode(childNodeName);
-        Console.WriteLine(childNode.InnerText);
-        if (childNode == null || !float.TryParse(childNode.InnerText, out float value))
+        var node = doc.SelectSingleNode("//chunk[@name='Attributes']/items/item[@name='Bounds']");
+        if (node == null)
         {
-            throw new InvalidOperationException($"{childNodeName} is missing or invalid in XML.");
+            throw new InvalidOperationException("Bounds is missing in XML.");
         }
-        return value;
+        return Helper.NodeToBounds(node);
     }
+     
+    private PointF GetPivot()
+    {
+        var node = doc.SelectSingleNode("//chunk[@name='Attributes']/items/item[@name='Pivot']");
+
+        if (node == null)
+        {
+            throw new InvalidOperationException("Pivot is missing in XML.");
+        }
+        
+        return Helper.NodeToPoint(node);
+    }
+    
+
+
 }

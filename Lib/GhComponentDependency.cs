@@ -1,6 +1,9 @@
 ﻿namespace GhXMLParser;
 
-public class GhDependency
+/// <summary>
+/// Describes a dependency inside a Grasshopper file.
+/// </summary>
+public class GhComponentDependency
 {
     public string? AssemblyFullName { get; set; }
     public string AssemblyVersion { get; set; }

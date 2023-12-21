@@ -8,20 +8,34 @@ namespace ConsoleTesting
     {
         public static void Main(string[] args)
         {
-            //Get exe path
-            string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Orbb.gh");
+            //Get exe path (gh or ghx)
+            string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "GH_Test_Bench.ghx");
             
-            var xmlDoc = Helper.GhToXml(path);
-            var header = new GhHeader(xmlDoc);
+            //Convert the grasshopper file to xml
+            var grasshopperXmlDoc = Helper.GrasshopperToXml(path);
+            
+            //Get the header of the grasshopper file
+            var header = new GhHeader(grasshopperXmlDoc);
+            Console.WriteLine(header.ComponentCount);
             var dep = header.Dependencies;
-            var xmlComponent = Helper.GetAllObjectsAsXml(xmlDoc);
+            
+            //Get all the components in the grasshopper file
+            var xmlComponent = Helper.GetAllComponentsAsXml(grasshopperXmlDoc);
             var allComponents = xmlComponent.Select(component => new GhComponent(component)).ToList();
 
-            foreach (var component in  allComponents)
+            foreach (var component in allComponents)
             {
                 Console.WriteLine(component.Name);
-                Console.WriteLine($"Number of inputs {component.Inputs.Count}");
-                
+                Console.WriteLine(component.InstanceGuid);
+                Console.WriteLine(component.Description);
+                try
+                {
+                    Console.WriteLine(component.Bounds);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine($"the component {component.Name} is missing the bounds =>  {e.Message}");
+                }
             }
         }
     }

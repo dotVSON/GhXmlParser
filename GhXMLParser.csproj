@@ -8,12 +8,6 @@
     <Compile Remove="ConsoleTesting\**" />
     <EmbeddedResource Remove="ConsoleTesting\**" />
     <None Remove="ConsoleTesting\**" />
-    <None Update="Resources\Orbb.ghx">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Resources\Orbb.gh">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 
   <ItemGroup>
@@ -37,9 +31,6 @@
 
   <ItemGroup>
     <None Update="Resources\GH_IO.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Resources\test_gh.gh">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

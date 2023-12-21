@@ -19,7 +19,7 @@ namespace GhXMLParser
         public string AuthorName => GetAuthorName();
         public string AuthorCopyRight => GetAuthorCopyright();
         public int ComponentCount => GetComponentCount();
-        public List<GhDependency> Dependencies => GetDependency();
+        public List<GhComponentDependency> Dependencies => GetDependency();
 
         public GhHeader(XmlDocument doc)
         {
@@ -256,14 +256,14 @@ namespace GhXMLParser
         }
         #endregion
 
-        public List<GhDependency> GetDependency()
+        public List<GhComponentDependency> GetDependency()
         {
             if (doc == null)
             {
                 throw new InvalidOperationException("XML document is not initialized.");
             }
 
-            List<GhDependency> libraries = new List<GhDependency>();
+            List<GhComponentDependency> libraries = new List<GhComponentDependency>();
 
             var libraryNodes = doc.SelectNodes("//chunk[@name='GHALibraries']/chunks/chunk[@name='Library']");
             if (libraryNodes == null)
@@ -273,7 +273,7 @@ namespace GhXMLParser
 
             foreach (XmlNode libraryNode in libraryNodes)
             {
-                var libraryInfo = new GhDependency();
+                var libraryInfo = new GhComponentDependency();
 
                 var assemblyFullNameNode = libraryNode.SelectSingleNode("items/item[@name='AssemblyFullName']");
                 var assemblyVersionNode = libraryNode.SelectSingleNode("items/item[@name='AssemblyVersion']");

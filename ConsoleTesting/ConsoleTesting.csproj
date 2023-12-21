@@ -15,18 +15,14 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Content Include="..\Resources\test_gh.gh">
-        <Link>test_gh.gh</Link>
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-    </ItemGroup>
-
-    <ItemGroup>
       <PackageReference Include="System.Drawing.Common" Version="8.0.0" />
     </ItemGroup>
 
     <ItemGroup>
-      <None Update="Orbb.gh">
+      <None Update="GH_Test_Bench.gh">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="GH_Test_Bench.ghx">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
     </ItemGroup>

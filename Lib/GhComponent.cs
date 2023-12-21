@@ -16,8 +16,8 @@ public class GhComponent
     public Rectangle Bounds => GetBounds();
     public PointF Pivot => GetPivot();
     public bool IsSelected => GetIsSelected();
-    public List<GhInput> Inputs { get; } = new List<GhInput>();
-    public List<GhOutput> Outputs { get; } = new List<GhOutput>();
+    public List<GhComponentInput> Inputs { get; } = new List<GhComponentInput>();
+    public List<GhComponentOutput> Outputs { get; } = new List<GhComponentOutput>();
     public List<XmlDocument> XmlInputs => GetAllXmlInputs();
     public List<XmlDocument> XmlOutputs => GetAllXmlOutputs();
 
@@ -26,7 +26,7 @@ public class GhComponent
         this.doc = doc;
         foreach (var input in XmlInputs)
         {
-            var ghInput = new GhInput(input);
+            var ghInput = new GhComponentInput(input);
             if (ghInput != null)
             {
                 Inputs.Add(ghInput);
@@ -35,7 +35,7 @@ public class GhComponent
 
         foreach (var output in XmlOutputs)
         {
-            var ghOutput = new GhOutput(output);
+            var ghOutput = new GhComponentOutput(output);
             if (ghOutput != null)
             {
                 Outputs.Add(ghOutput);
@@ -124,6 +124,8 @@ public class GhComponent
 
     private Rectangle GetBounds()
     {
+        //TODO : check if the bounds are missing or component is actually a group
+        
         var node = doc.SelectSingleNode("//chunk[@name='Object']/chunks/chunk[@name='Container']/chunks/chunk[@name='Attributes']/items/item[@name='Bounds']");
         if (node == null)
         {
