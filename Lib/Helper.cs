@@ -33,8 +33,9 @@ public static class Helper
     /// </code>
     /// </example>
     public static XmlDocument GrasshopperToXml(string path)
-    {
-            var doc = new XmlDocument();
+    { 
+        //Credit: https://www.grasshopper3d.com/forum/topics/example-on-how-to-use-gh-io-dll
+        var doc = new XmlDocument();
         try
         {
             var archive = new GH_Archive();
