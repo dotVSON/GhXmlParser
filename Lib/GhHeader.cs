@@ -4,10 +4,12 @@ using System.Linq;
 
 namespace GhXMLParser
 {
+    /// <summary>
+    /// Helper methods for parsing Grasshopper files.
+    /// </summary>
     public class GhHeader
     {
         private readonly XmlDocument doc;
-        
         public string ArchiveVersion => GetArchiveVersion();
         public string GrasshopperVersion => GetGrasshopperVersion();
         public string DocumentId => GetDocumentId();

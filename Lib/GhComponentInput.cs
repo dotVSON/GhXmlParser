@@ -16,7 +16,7 @@ public class GhComponentInput
     public bool IsOptional => GetOptional();
     public string Source => GetSource();
     public int SourceCount => GetSourceCount();
-    public string Type {get; set;}
+    public string? Type {get; set;}
 
     public Rectangle Bounds => GetBounds();
     public PointF Pivot => GetPivot();
@@ -25,7 +25,6 @@ public class GhComponentInput
     public GhComponentInput(XmlDocument doc)
     {
         this.doc = doc;
-        // Console.WriteLine(doc.OuterXml);
     }
     
     public string GetDescription()
@@ -136,7 +135,4 @@ public class GhComponentInput
         
         return Helper.NodeToPoint(node);
     }
-    
-
-
 }

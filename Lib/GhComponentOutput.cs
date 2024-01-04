@@ -4,7 +4,7 @@ using System.Xml;
 namespace GhXMLParser;
 
 /// <summary>
-/// Describes a Grasshopper component output.
+/// Describes a Grasshopper components outputs.
 /// </summary>
 public class GhComponentOutput
 {

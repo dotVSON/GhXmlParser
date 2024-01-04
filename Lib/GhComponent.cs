@@ -171,15 +171,17 @@ public class GhComponent
 
         return selected;
     }
-    
-    
-
 
     private List<XmlDocument> GetAllXmlInputs()
     {
         var paramInputXmlList = new List<XmlDocument>();
 
         var paramInputChunks = doc.SelectNodes("//chunk[@name='param_input']");
+
+        if (paramInputChunks == null)
+        {
+            throw new InvalidOperationException("param_input is missing in XML.");
+        }
 
         foreach (XmlElement paramInputChunk in paramInputChunks)
         {
@@ -196,6 +198,11 @@ public class GhComponent
         var paramInputXmlList = new List<XmlDocument>();
 
         var paramInputChunks = doc.SelectNodes("//chunk[@name='param_output']");
+
+        if (paramInputChunks == null)
+        {
+            throw new InvalidOperationException("param_output is missing in XML.");
+        }
 
         foreach (XmlElement paramInputChunk in paramInputChunks)
         {
