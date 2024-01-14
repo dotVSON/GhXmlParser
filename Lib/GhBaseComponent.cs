@@ -1,7 +1,7 @@
 ﻿using System.Drawing;
 using System.Xml;
 
-namespace GhXMLParser.Lib.Components;
+namespace GhXMLParser.Lib;
 
 public class GhBaseComponent
 {
@@ -23,6 +23,13 @@ public class GhBaseComponent
     public GhBaseComponent(XmlDocument doc)
     {
         this.doc = doc;
+        InitializeInputs();
+        InitializeOutputs();
+    }
+    
+    
+    protected virtual void InitializeInputs()
+    {
         foreach (var input in XmlInputs)
         {
             var ghInput = new GhComponentInput(input);
@@ -31,7 +38,10 @@ public class GhBaseComponent
                 Inputs.Add(ghInput);
             }
         }
+    }
 
+    protected virtual void InitializeOutputs()
+    {
         foreach (var output in XmlOutputs)
         {
             var ghOutput = new GhComponentOutput(output);
@@ -40,7 +50,6 @@ public class GhBaseComponent
                 Outputs.Add(ghOutput);
             }
         }
-
     }
 
     private string GetGUID()
