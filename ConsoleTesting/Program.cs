@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using GhXMLParser;
 using GhXMLParser.Lib;
+using GhXMLParser.Lib.Components;
 
 
 namespace ConsoleTesting
@@ -21,11 +22,20 @@ namespace ConsoleTesting
             //Get the header of the grasshopper file
             var header = new GhHeader(grasshopperXmlDoc);
 
-            System.Console.WriteLine(header.Thumbnail);
-            
             //Get all the components in the grasshopper file
             var xmlComponents = Parser.GetAllComponentsAsXml(grasshopperXmlDoc);
-            var allComponents = xmlComponents.Select(component => new GhBaseComponent(component)).ToList();
+            
+            var slider = xmlComponents[0];
+            var comp = Parser.ParseComponentXml(slider);
+            
+            Console.WriteLine(comp);
+
+            var inner = slider.SelectSingleNode("//chunk[@name='Object']//chunk//chunk[@name='Slider']/items/item[@name='Max']");
+
+            var impSlider = new GhSlider(slider);
+
+
+            // var allComponents = xmlComponents.Select(component => new GhBaseComponent(component)).ToList();
 
             // foreach (var component in allComponents)
             // {

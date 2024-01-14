@@ -1,5 +1,6 @@
 ﻿using System.Xml;
 using GH_IO.Serialization;
+using GhXMLParser.Lib.Components;
 
 namespace GhXMLParser;
 
@@ -70,25 +71,47 @@ public static class Parser
         return doc;
     }
     
+    
+    /// <summary>
+    /// Custom XmlDocument class for storing a single component.
+    public class ComponentXml : XmlDocument
+    {
+        internal ComponentXml()
+        {
+        }
+    }
+    
     /// <summary>
     /// Get all object chunks (components) as separate XML documents.
     /// </summary>
     /// <returns>A list of XML documents, each representing an object.</returns>
-    public static List<XmlDocument> GetAllComponentsAsXml(XmlDocument doc)
+    public static List<ComponentXml> GetAllComponentsAsXml(XmlDocument doc)
     {
-        var objectXmlList = new List<XmlDocument>();
+        var objectXmlList = new List<ComponentXml>();
 
         // This XPath targets any 'Object' chunk within 'DefinitionObjects'
         var objectChunks = doc.SelectNodes("//chunk[@name='DefinitionObjects']//chunk[@name='Object']");
 
         foreach (XmlElement objectChunk in objectChunks)
         {
-            var objectXml = new XmlDocument();
+            var objectXml = new ComponentXml();
             var importNode = objectXml.ImportNode(objectChunk, true);
             objectXml.AppendChild(importNode);
             objectXmlList.Add(objectXml);
         }
 
         return objectXmlList;
+    }
+
+ 
+    public static GhBaseComponent ParseComponentXml(ComponentXml componentXml)
+    {
+            switch (componentXml.SelectSingleNode($"//chunk[@name='Object']/items/item[@name='Name']").InnerText)
+            {
+                case "Number Slider":
+                    return new GhSlider(componentXml);
+                default:
+                    return new GhBaseComponent(componentXml);
+            }
     }
 }

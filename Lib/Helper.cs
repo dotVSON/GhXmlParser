@@ -51,6 +51,29 @@ public static class Helper
         }
     }
     
+    
+    public static bool CheckNamedComponent(string componentName, Parser.ComponentXml componentChunk)
+    {
+        // Check if the componentName parameter is valid
+        if (string.IsNullOrWhiteSpace(componentName))
+        {
+            throw new ArgumentException("Component name cannot be null or whitespace.", nameof(componentName));
+        }
+
+        // Search for the component in the XML component chunk
+        var node = componentChunk.SelectSingleNode($"//chunk[@name='Object']/items/item[@name='Name']");
+        
+        // If the component is not found, return false
+        if (node == null || string.IsNullOrEmpty(node.InnerText))
+        {
+            return false;
+        }
+
+        Console.WriteLine(node.InnerText);
+        // If the component is found, check if the name matches the componentName parameter
+        return node.InnerText == componentName;
+    }
+    
     /// <summary>
     /// Converts an XML node to a PointF object.
     /// </summary>

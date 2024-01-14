@@ -13,7 +13,7 @@ public class GhComponentOutput
     public string InstanceGuid => GetInstanceGuid();
     public string Name  => GetName();
     public string NickName => GetNickName();
-    public bool IsOptional => GetOptional();
+    public bool Optional => GetOptional();
     public int SourceCount => GetSourceCount();
     public Rectangle Bounds => GetBounds();
 

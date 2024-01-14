@@ -1,15 +1,15 @@
 ﻿using System.Drawing;
 using System.Xml;
 
-namespace GhXMLParser.Lib;
+namespace GhXMLParser.Lib.Components;
 
 public class GhBaseComponent
 {
-    public readonly XmlDocument doc;
+    public readonly Parser.ComponentXml doc;
     public string GUID => GetGUID();
-    public string Name => GetName();
     public string Description => GetDescription();
     public string InstanceGuid => GetInstanceGuid();
+    public string Name => GetName();
     public string Nickname => GetNickname();
     public bool? IsOptional => GetOptional();
     public Rectangle Bounds => GetBounds();
@@ -20,14 +20,15 @@ public class GhBaseComponent
     public List<XmlDocument> XmlInputs => GetAllXmlInputs();
     public List<XmlDocument> XmlOutputs => GetAllXmlOutputs();
 
-    public GhBaseComponent(XmlDocument doc)
+    public GhBaseComponent(Parser.ComponentXml doc)
     {
         this.doc = doc;
         InitializeInputs();
         InitializeOutputs();
     }
-    
-    
+
+    #region Getters
+
     protected virtual void InitializeInputs()
     {
         foreach (var input in XmlInputs)
@@ -85,7 +86,7 @@ public class GhBaseComponent
 
         return node.InnerText;
     }
-    
+
 
     private string GetInstanceGuid()
     {
@@ -133,8 +134,9 @@ public class GhBaseComponent
     private Rectangle GetBounds()
     {
         //TODO : check if the bounds are missing or component is actually a group
-        
-        var node = doc.SelectSingleNode("//chunk[@name='Object']/chunks/chunk[@name='Container']/chunks/chunk[@name='Attributes']/items/item[@name='Bounds']");
+
+        var node = doc.SelectSingleNode(
+            "//chunk[@name='Object']/chunks/chunk[@name='Container']/chunks/chunk[@name='Attributes']/items/item[@name='Bounds']");
         if (node == null)
         {
             throw new InvalidOperationException("Bounds is missing in XML.");
@@ -157,12 +159,12 @@ public class GhBaseComponent
         {
             throw new InvalidOperationException("Pivot is missing in XML.");
         }
-        
+
         float x = Helper.GetFloatFromNode(node, "X");
         float y = Helper.GetFloatFromNode(node, "Y");
         return new PointF(x, y);
     }
-    
+
     private bool GetIsSelected()
     {
         var node = doc.SelectSingleNode(
@@ -198,9 +200,10 @@ public class GhBaseComponent
             paramInputXml.AppendChild(importNode);
             paramInputXmlList.Add(paramInputXml);
         }
+
         return paramInputXmlList;
     }
-    
+
     private List<XmlDocument> GetAllXmlOutputs()
     {
         var paramInputXmlList = new List<XmlDocument>();
@@ -219,6 +222,9 @@ public class GhBaseComponent
             paramInputXml.AppendChild(importNode);
             paramInputXmlList.Add(paramInputXml);
         }
+
         return paramInputXmlList;
     }
+
+    #endregion
 }
