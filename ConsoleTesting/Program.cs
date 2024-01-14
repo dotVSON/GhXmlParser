@@ -1,4 +1,7 @@
 ﻿// See https://aka.ms/new-console-template for more information
+
+using System.Drawing;
+using System.Drawing.Imaging;
 using GhXMLParser;
 
 
@@ -16,27 +19,27 @@ namespace ConsoleTesting
             
             //Get the header of the grasshopper file
             var header = new GhHeader(grasshopperXmlDoc);
-            Console.WriteLine(header.ComponentCount);
-            var dep = header.Dependencies;
+
+            System.Console.WriteLine(header.Thumbnail);
             
             //Get all the components in the grasshopper file
             var xmlComponents = Helper.GetAllComponentsAsXml(grasshopperXmlDoc);
             var allComponents = xmlComponents.Select(component => new GhComponent(component)).ToList();
 
-            foreach (var component in allComponents)
-            {
-                Console.WriteLine(component.Name);
-                Console.WriteLine(component.InstanceGuid);
-                Console.WriteLine(component.Description);
-                try
-                {
-                    Console.WriteLine(component.Bounds);
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine($"the component {component.Name} is missing the bounds =>  {e.Message}");
-                }
-            }
+            // foreach (var component in allComponents)
+            // {
+            //     Console.WriteLine(component.Name);
+            //     Console.WriteLine(component.InstanceGuid);
+            //     Console.WriteLine(component.Description);
+            //     try
+            //     {
+            //         Console.WriteLine(component.Bounds);
+            //     }
+            //     catch (Exception e)
+            //     {
+            //         Console.WriteLine($"the component {component.Name} is missing the bounds =>  {e.Message}");
+            //     }
+            // }
         }
     }
 }

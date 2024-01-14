@@ -22,14 +22,21 @@ namespace GhXMLParser
         public string AuthorCopyRight => GetAuthorCopyright();
         public int ComponentCount => GetComponentCount();
         public List<GhComponentDependency> Dependencies => GetDependency();
+        /// <summary>
+        /// Thumbnail of the GH file as an byte array
+        /// </summary>
+        public byte[] Thumbnail => GetThumbnail();
+        
 
         public GhHeader(XmlDocument doc)
         {
             this.doc = doc;
+            
+            GetThumbnail();
         }
 
         #region Definition properties
-        
+
         /// <summary>
         /// Get the plugin version from the GH file.
         /// </summary>
@@ -49,7 +56,8 @@ namespace GhXMLParser
 
             if (majorNode == null || minorNode == null || revisionNode == null)
             {
-                throw new InvalidOperationException("One or more version components (Major, Minor, Revision) are missing in XML.");
+                throw new InvalidOperationException(
+                    "One or more version components (Major, Minor, Revision) are missing in XML.");
             }
 
             string major = majorNode.InnerText;
@@ -78,7 +86,8 @@ namespace GhXMLParser
 
             if (majorNode == null || minorNode == null || revisionNode == null)
             {
-                throw new InvalidOperationException("One or more version components (Major, Minor, Revision) are missing in XML.");
+                throw new InvalidOperationException(
+                    "One or more version components (Major, Minor, Revision) are missing in XML.");
             }
 
             string major = majorNode.InnerText;
@@ -87,7 +96,7 @@ namespace GhXMLParser
 
             return $"{major}.{minor}.{revision}";
         }
-        
+
         #region DocumentHeader
 
         /// <summary>
@@ -105,12 +114,13 @@ namespace GhXMLParser
 
             return node.InnerText;
         }
-        
+
         //TODO Preview/PreviewMeshType/PreviewNormal/PreviewSelected
 
         #endregion
 
         #region DefinitionProperties
+
         /// <summary>
         /// Get the document date from the GH file.
         /// </summary>
@@ -126,7 +136,7 @@ namespace GhXMLParser
 
             return node.InnerText; // Convert this to a date format if necessary
         }
-        
+
         /// <summary>
         /// Get the document description from the GH file.
         /// </summary>
@@ -142,7 +152,7 @@ namespace GhXMLParser
 
             return node.InnerText; // This could be empty but present
         }
-        
+
         /// <summary>
         /// Get the document name from the GH file.
         /// </summary>
@@ -158,9 +168,9 @@ namespace GhXMLParser
 
             return node.InnerText;
         }
-        
+
         //TODO KeepOpen? Revisions
-        
+
         /// <summary>
         /// Get the projection details (Target X, Target Y, and Zoom) from the GH file.
         /// </summary>
@@ -201,13 +211,13 @@ namespace GhXMLParser
 
             return (targetX, targetY, zoom);
         }
-        
+
         //TODO Views/RcpLayout
-       
+
         #endregion
 
-        #region  Autor infos
-        
+        #region Autor infos
+
         /// <summary>
         /// Get the author's company from the GH file.
         /// </summary>
@@ -256,6 +266,7 @@ namespace GhXMLParser
 
             return node.InnerText;
         }
+
         #endregion
 
         public List<GhComponentDependency> GetDependency()
@@ -299,117 +310,54 @@ namespace GhXMLParser
 
             return libraries;
         }
-        
-        #endregion
-        
-        
-    
 
-    #region DefinitionObjects
-
-    //Getting all the objects in the definition
-    /// <summary>
-    /// Get the object count from the GH file.
-    /// </summary>
-    /// <returns>The object count as an integer.</returns>
-    /// <exception cref="InvalidOperationException"></exception>
-    public int GetComponentCount()
-    {
-        var node = doc.SelectSingleNode("//item[@name='ObjectCount']");
-        if (node == null || string.IsNullOrEmpty(node.InnerText))
+        /// <summary>
+        /// Get the object count from the GH file.
+        /// </summary>
+        /// <returns>The object count as an integer.</returns>
+        /// <exception cref="InvalidOperationException"></exception>
+        public int GetComponentCount()
         {
-            throw new InvalidOperationException("Object count is missing or empty in XML.");
+            var node = doc.SelectSingleNode("//item[@name='ObjectCount']");
+            if (node == null || string.IsNullOrEmpty(node.InnerText))
+            {
+                throw new InvalidOperationException("Object count is missing or empty in XML.");
+            }
+
+            if (!int.TryParse(node.InnerText, out int objectCount))
+            {
+                throw new InvalidOperationException("Invalid format for Object Count in XML.");
+            }
+
+            return objectCount;
         }
 
-        if (!int.TryParse(node.InnerText, out int objectCount))
+        public byte[] GetThumbnail()
         {
-            throw new InvalidOperationException("Invalid format for Object Count in XML.");
+            var node =  doc.SelectSingleNode("//chunk[@name='Thumbnail']");
+            
+            if (node == null || string.IsNullOrEmpty(node.InnerText))
+            {
+                throw new InvalidOperationException("Object count is missing or empty in XML.");
+            }
+
+            // convert the string to byte array
+            return Convert.FromBase64String(node.InnerText);
+            
+            //Convert the byte array to image
+            // using (MemoryStream ms = new MemoryStream(header.Thumbnail))
+            // {
+            //     // Create an Image object from the MemoryStream
+            //     using (Image image = Image.FromStream(ms))
+            //     {
+            //         // Use the Image object as needed, e.g., save to file
+            //         image.Save("outputImage.jpg", ImageFormat.Jpeg);
+            //         Console.WriteLine("Image saved as outputImage.jpg");
+            //     }
+            // }
+
         }
-
-        return objectCount;
-    }
-    
-
-
-    #region Component Inofs
-
-    public string GetObjectGuid(XmlNode objectNode)
-    {
-        return objectNode.SelectSingleNode("items/item[@name='GUID']").InnerText;
-    }
-    
-    public string GetObjectName(XmlNode objectNode)
-    {
-        return objectNode.SelectSingleNode("items/item[@name='Name']").InnerText;
-    }
-    
-    public string GetContainerDescription(XmlNode objectNode)
-    {
-        return objectNode.SelectSingleNode("chunks/chunk[@name='Container']/items/item[@name='Description']").InnerText;
-    }
-    
-    public string GetInstanceGuid(XmlNode objectNode)
-    {
-        return objectNode.SelectSingleNode("chunks/chunk[@name='Container']/items/item[@name='InstanceGuid']").InnerText;
-    }
-
-    public string GetContainerName(XmlNode objectNode)
-    {
-        return objectNode.SelectSingleNode("chunks/chunk[@name='Container']/items/item[@name='Name']").InnerText;
-    }
-    
-    public string GetNickName(XmlNode objectNode)
-    {
-        return objectNode.SelectSingleNode("chunks/chunk[@name='Container']/items/item[@name='NickName']").InnerText;
-    }
-    
-    public bool GetOptional(XmlNode objectNode)
-    {
-        return bool.Parse(objectNode.SelectSingleNode("chunks/chunk[@name='Container']/items/item[@name='Optional']").InnerText);
-    }
-    
-    public int GetSourceCount(XmlNode objectNode)
-    {
-        return int.Parse(objectNode.SelectSingleNode("chunks/chunk[@name='Container']/items/item[@name='SourceCount']").InnerText);
-    }
-    
-    public (int X, int Y, int W, int H) GetBounds(XmlNode objectNode)
-    {
-        XmlNode boundsNode = objectNode.SelectSingleNode("chunks/chunk[@name='Container']/chunks/chunk[@name='Attributes']/items/item[@name='Bounds']");
-        int x = int.Parse(boundsNode.SelectSingleNode("X").InnerText);
-        int y = int.Parse(boundsNode.SelectSingleNode("Y").InnerText);
-        int w = int.Parse(boundsNode.SelectSingleNode("W").InnerText);
-        int h = int.Parse(boundsNode.SelectSingleNode("H").InnerText);
-        return (x, y, w, h);
-    }
-    
-    public (float X, float Y) GetPivot(XmlNode objectNode)
-    {
-        XmlNode pivotNode = objectNode.SelectSingleNode("chunks/chunk[@name='Container']/chunks/chunk[@name='Attributes']/items/item[@name='Pivot']");
-        float x = float.Parse(pivotNode.SelectSingleNode("X").InnerText);
-        float y = float.Parse(pivotNode.SelectSingleNode("Y").InnerText);
-        return (x, y);
-    }
-    
-    public bool GetSelected(XmlNode objectNode)
-    {
-        return bool.Parse(objectNode.SelectSingleNode("chunks/chunk[@name='Container']/chunks/chunk[@name='Attributes']/items/item[@name='Selected']").InnerText);
-    }
-
-
-
-
-
-
-
-
-
-
-
+        
     #endregion
-
-    #endregion
-    
     }
-
 }

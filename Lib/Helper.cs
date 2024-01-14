@@ -56,8 +56,6 @@ public static class Helper
             // Load serialized content into XmlDocument
             doc.LoadXml(xmlContent);
             //get path to desktop
-            string desktio = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-            //save xml to desktop
         }
         catch (XmlException ex)
         {
@@ -76,6 +74,7 @@ public static class Helper
         }
         return doc;
     }
+
     
     /// <summary>
     /// Get all object chunks (components) as separate XML documents.
@@ -99,8 +98,6 @@ public static class Helper
         return objectXmlList;
     }
     
-    
-
     /// <summary>
     /// Retrieves a float value from a specified child node of a parent XML node.
     /// </summary>
