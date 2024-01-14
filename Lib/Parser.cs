@@ -29,7 +29,7 @@ public static class Parser
     /// </code>
     /// </example>
     public static XmlDocument GrasshopperToXml(string path)
-    { 
+    {
         //Credit: https://www.grasshopper3d.com/forum/topics/example-on-how-to-use-gh-io-dll
         var doc = new XmlDocument();
         try
@@ -68,10 +68,11 @@ public static class Parser
             // Handle any other unexpected errors
             Console.WriteLine($"An unexpected error occurred: {ex.Message}");
         }
+
         return doc;
     }
-    
-    
+
+
     /// <summary>
     /// Custom XmlDocument class for storing a single component.
     public class ComponentXml : XmlDocument
@@ -80,7 +81,7 @@ public static class Parser
         {
         }
     }
-    
+
     /// <summary>
     /// Get all object chunks (components) as separate XML documents.
     /// </summary>
@@ -103,15 +104,21 @@ public static class Parser
         return objectXmlList;
     }
 
- 
+    /// <summary>
+    /// Parses a ComponentXml object and returns the appropriate Grasshopper component.
+    /// </summary>
+    /// <param name="componentXml">The ComponentXml object to parse.</param>
+    /// <returns>A GhBaseComponent object that represents the parsed component.</returns>
     public static GhBaseComponent ParseComponentXml(ComponentXml componentXml)
     {
-            switch (componentXml.SelectSingleNode($"//chunk[@name='Object']/items/item[@name='Name']").InnerText)
-            {
-                case "Number Slider":
-                    return new GhSlider(componentXml);
-                default:
-                    return new GhBaseComponent(componentXml);
-            }
+        switch (componentXml.SelectSingleNode($"//chunk[@name='Object']/items/item[@name='Name']").InnerText)
+        {
+            case "Number Slider":
+                return new GhSlider(componentXml);
+            case "Panel":
+                return new GhPanel(componentXml);
+            default:
+                return new GhBaseComponent(componentXml);
+        }
     }
 }
