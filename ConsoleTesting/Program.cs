@@ -3,6 +3,7 @@
 using System.Drawing;
 using System.Drawing.Imaging;
 using GhXMLParser;
+using GhXMLParser.Lib.Components;
 
 
 namespace ConsoleTesting
@@ -15,7 +16,7 @@ namespace ConsoleTesting
             string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "GH_Test_Bench.ghx");
             
             //Convert the grasshopper file to xml
-            var grasshopperXmlDoc = Helper.GrasshopperToXml(path);
+            var grasshopperXmlDoc = Parser.GrasshopperToXml(path);
             
             //Get the header of the grasshopper file
             var header = new GhHeader(grasshopperXmlDoc);
@@ -23,8 +24,8 @@ namespace ConsoleTesting
             System.Console.WriteLine(header.Thumbnail);
             
             //Get all the components in the grasshopper file
-            var xmlComponents = Helper.GetAllComponentsAsXml(grasshopperXmlDoc);
-            var allComponents = xmlComponents.Select(component => new GhComponent(component)).ToList();
+            var xmlComponents = Parser.GetAllComponentsAsXml(grasshopperXmlDoc);
+            var allComponents = xmlComponents.Select(component => new GhBaseComponent(component)).ToList();
 
             // foreach (var component in allComponents)
             // {

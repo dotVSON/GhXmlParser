@@ -1,7 +1,7 @@
 ﻿using System.Drawing;
 using System.Xml;
 
-namespace GhXMLParser;
+namespace GhXMLParser.Lib.Components;
 
 /// <summary>
 /// Describes a Grasshopper component input.

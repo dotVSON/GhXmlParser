@@ -1,10 +1,9 @@
-﻿using System.Xml;
-using System.Drawing;
-using System.Threading.Channels;
+﻿using System.Drawing;
+using System.Xml;
 
-namespace GhXMLParser;
+namespace GhXMLParser.Lib.Components;
 
-public class GhComponent
+public class GhBaseComponent
 {
     public readonly XmlDocument doc;
     public string GUID => GetGUID();
@@ -21,7 +20,7 @@ public class GhComponent
     public List<XmlDocument> XmlInputs => GetAllXmlInputs();
     public List<XmlDocument> XmlOutputs => GetAllXmlOutputs();
 
-    public GhComponent(XmlDocument doc)
+    public GhBaseComponent(XmlDocument doc)
     {
         this.doc = doc;
         foreach (var input in XmlInputs)
