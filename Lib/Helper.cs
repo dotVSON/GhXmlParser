@@ -121,10 +121,6 @@ public static class Helper
     /// <summary>
     /// Represents a rectangle in a two-dimensional plane.
     /// </summary>
-    /// <remarks>
-    /// The Rectangle structure is used to define the boundaries of a rectangular area.
-    /// It is commonly used in graphics programming and user interface design.
-    /// </remarks>
     public static Rectangle NodeToBounds(XmlNode node)
     {
         if (node == null)
@@ -147,8 +143,6 @@ public static class Helper
         }
     }
     
-    
-
     /// <summary>
     /// Converts an XML node to a PointF object.
     /// </summary>

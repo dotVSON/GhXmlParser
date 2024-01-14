@@ -5,7 +5,7 @@ using System.Linq;
 namespace GhXMLParser
 {
     /// <summary>
-    /// Helper methods for parsing Grasshopper files.
+    /// Class with methods for parsing Grasshopper base information.
     /// </summary>
     public class GhHeader
     {

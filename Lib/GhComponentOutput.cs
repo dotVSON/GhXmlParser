@@ -14,7 +14,6 @@ public class GhComponentOutput
     public string Name  => GetName();
     public string NickName => GetNickName();
     public bool IsOptional => GetOptional();
-    // public string Source => GetSource();
     public int SourceCount => GetSourceCount();
     public Rectangle Bounds => GetBounds();
 
@@ -25,7 +24,6 @@ public class GhComponentOutput
     public GhComponentOutput(XmlDocument doc)
     {
         this.doc = doc;
-        // Console.WriteLine(doc.OuterXml);
     }
     
     /// <summary>
